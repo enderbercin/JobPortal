@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JobPortal.Domain.Entities
+namespace Core
 {
     public abstract class BaseEntity
     {
@@ -19,10 +20,5 @@ namespace JobPortal.Domain.Entities
 
         public DateTime? ChangedDate { get; set; }
 
-    }
-    public enum RecordStatus
-    {
-        Active = 1,
-        Passive
     }
 }

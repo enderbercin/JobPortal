@@ -1,4 +1,5 @@
-﻿using JobPortal.Domain.Entities;
+﻿using Core.Enums;
+using JobPortal.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

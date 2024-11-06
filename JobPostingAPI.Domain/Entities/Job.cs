@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Core;
+using Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -31,9 +33,5 @@ namespace JobPortal.Domain.Entities
         public Company Company { get; set; }
 
     }
-    public enum EmploymentType
-    {
-        FullTime = 1,
-        PartTime = 2,
-    }
+   
 }
