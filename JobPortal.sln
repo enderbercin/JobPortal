@@ -11,7 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobPortal.Infrastructure", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobPortal.Tests", "JobPostingAPI.Tests\JobPortal.Tests.csproj", "{C0E68BFA-D060-47F2-937F-2C6ACEB8CA3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobPortal.API", "JobPortal.API\JobPortal.API.csproj", "{551F568C-9AC9-4D45-B78D-25C34F2421B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobPortal.API", "JobPortal.API\JobPortal.API.csproj", "{551F568C-9AC9-4D45-B78D-25C34F2421B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{80924C81-DF9F-4330-B533-B51E5870DBA0}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

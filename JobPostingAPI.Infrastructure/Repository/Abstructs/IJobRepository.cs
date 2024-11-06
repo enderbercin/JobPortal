@@ -1,5 +1,4 @@
-﻿using JobPortal.Domain.Abstructs;
-using JobPortal.Domain.Entities;
+﻿using JobPortal.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

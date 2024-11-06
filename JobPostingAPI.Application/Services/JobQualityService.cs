@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JobPortal.Application.Services
 {
-    public class JobQualityService
+    public class JobQualityService : IJobQualityService
     {
         private readonly List<string> _restrictedWords = new List<string> { "yasaklı1", "yasaklı2", "yasaklı3" };
 

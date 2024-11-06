@@ -36,7 +36,10 @@ namespace JobPortal.API.Controllers
         public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyCommand command)
         {
             var company = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetCompanyById), new { id = company.Id }, company);
+            if (company.Success)
+                return CreatedAtAction(nameof(GetCompanyById), new { id = company.Data.Id }, company);
+
+            return BadRequest(company.ExceptionList.FirstOrDefault());
         }
 
         [HttpPut("{id}")]

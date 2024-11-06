@@ -1,5 +1,6 @@
-﻿using JobPortal.Domain.Abstructs;
-using JobPortal.Domain.Entities;
+﻿using JobPortal.Domain.Entities;
+using JobPortal.Infrastructure.Data;
+using JobPortal.Infrastructure.Repository.Abstructs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,46 +11,70 @@ using System.Threading.Tasks;
 
 namespace JobPortal.Infrastructure.Repository
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        protected readonly DbContext _context;
         private readonly DbSet<TEntity> _dbSet;
+        private readonly JobPortalDbContext _dbContext;
 
-        public Repository(DbContext context)
+        public Repository(JobPortalDbContext dbContext)
         {
-            _context = context;
-            _dbSet = context.Set<TEntity>();
-
-        }
-
-        public async Task<TEntity> GetByIdAsync(Guid id)
-        {
-            return await _context.Set<TEntity>().FindAsync(id);
+            _dbContext = dbContext;
+            _dbSet = _dbContext.Set<TEntity>();
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await _context.Set<TEntity>().ToListAsync();
+            return await _dbSet.ToListAsync();
         }
 
         public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _context.Set<TEntity>().Where(predicate).ToListAsync();
+            return await _dbSet.Where(predicate).ToListAsync();
+        }
+
+        public async Task<TEntity> GetByIdAsync(object id)
+        {
+            return await _dbSet.FindAsync(id);
         }
 
         public async Task AddAsync(TEntity entity)
         {
-            await _context.Set<TEntity>().AddAsync(entity);
+            await _dbSet.AddAsync(entity);
         }
 
-        public void Remove(TEntity entity)
+        public async Task UpdateAsync(TEntity entity)
         {
-            _context.Set<TEntity>().Remove(entity);
+            _dbSet.Update(entity);
         }
 
-        public void Update(TEntity entity)
+        public async Task DeleteAsync(object id)
         {
-            _context.Set<TEntity>().Update(entity);
+            TEntity entityToDelete = await _dbSet.FindAsync(id);
+            if (entityToDelete != null)
+                _dbSet.Remove(entityToDelete);
         }
+        public async Task DeleteRangeAsync(IEnumerable<TEntity> entities)
+        {
+            if (entities.Count() > 0)
+                _dbSet.RemoveRange(entities);
+        }
+
+
+        public Task<IQueryable<TEntity>> FindWithInclude(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+        {
+            var queryable = _dbSet.Where(predicate);
+            foreach (var include in includes)
+            {
+                queryable = queryable.Include(include);
+            }
+            return Task.FromResult(queryable);
+        }
+
+
+        public TEntity GetById(object id)
+        {
+            return _dbSet.Find(id);
+        }
+
     }
 }

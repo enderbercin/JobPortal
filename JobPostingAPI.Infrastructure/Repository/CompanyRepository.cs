@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace JobPortal.Infrastructure.Repository
@@ -33,6 +34,14 @@ namespace JobPortal.Infrastructure.Repository
             {
                 _context.Companies.Remove(company);
             }
+        }
+
+        public async Task<Company> GetByPhoneNumber(string number)
+        {
+            string cleanNumber = Regex.Replace(number, @"[^\d]", "");
+            string last10Digits = cleanNumber.Substring(cleanNumber.Length - 10);
+            return await _context.Companies
+                                       .FirstOrDefaultAsync(c => c.PhoneNumber.EndsWith(last10Digits));
         }
     }
 }

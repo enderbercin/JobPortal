@@ -1,5 +1,4 @@
-﻿using JobPortal.Domain.Abstructs;
-using JobPortal.Domain.Entities;
+﻿using JobPortal.Domain.Entities;
 using JobPortal.Infrastructure.Data;
 using JobPortal.Infrastructure.Repository;
 using JobPortal.Infrastructure.Repository.Abstructs;
@@ -12,39 +11,45 @@ using System.Threading.Tasks;
 
 namespace JobPortal.Infrastructure
 {
-    public class UnitOfWork<TEntity> : IUnitOfWork<TEntity> where TEntity : BaseEntity
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly JobPortalDbContext _context;
+        private Dictionary<Type, object> _repositories;
 
-        public UnitOfWork(JobPortalDbContext appDbContext)
+        public UnitOfWork(JobPortalDbContext context)
         {
-            _context = appDbContext;
+            _context = context;
+            _repositories = new Dictionary<Type, object>();
         }
+
+
+        private CompanyRepository _CompanyRepository;
+
+        public ICompanyRepository CompanyRepository => _CompanyRepository = _CompanyRepository ?? new CompanyRepository(_context);
 
         private JobRepository _JobRepository;
-        public IJobRepository Jobs => _JobRepository = _JobRepository ?? new JobRepository(_context);
+
+        public IJobRepository JobRepository => _JobRepository = _JobRepository ?? new JobRepository(_context);
 
 
-        private Repository<TEntity> _repository;
-        public IRepository<TEntity> Repositories => _repository = _repository ?? new Repository<TEntity>(_context);
-
-        public IRepository<Company> Companies => throw new NotImplementedException();
-
-        IRepository<Job> IUnitOfWork<TEntity>.Jobs => throw new NotImplementedException();
-
-        public Task CommitAsync()
+        public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
         {
-            throw new NotImplementedException();
+            if (_repositories.ContainsKey(typeof(TEntity)))
+                return (IRepository<TEntity>)_repositories[typeof(TEntity)];
+
+            var repository = new Repository<TEntity>(_context);
+            _repositories.Add(typeof(TEntity), repository);
+            return repository;
         }
 
-        public void Commit()
+        public async Task<int> SaveChangesAsync()
         {
-            throw new NotImplementedException();
+            return await _context.SaveChangesAsync();
         }
 
-        public Task<int> CompleteAsync()
+        public void Dispose()
         {
-            throw new NotImplementedException();
+            _context.Dispose();
         }
     }
 }

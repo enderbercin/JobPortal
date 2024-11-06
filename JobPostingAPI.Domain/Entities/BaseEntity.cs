@@ -15,7 +15,7 @@ namespace JobPortal.Domain.Entities
         public RecordStatus RecordStatus { get; set; }
 
 
-        public DateTime? CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? CreatedDate { get; set; } = DateTime.UtcNow;
 
         public DateTime? ChangedDate { get; set; }
 

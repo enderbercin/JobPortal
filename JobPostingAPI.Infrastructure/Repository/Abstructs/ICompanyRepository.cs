@@ -1,5 +1,4 @@
-﻿using JobPortal.Domain.Abstructs;
-using JobPortal.Domain.Entities;
+﻿using JobPortal.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +9,6 @@ namespace JobPortal.Infrastructure.Repository.Abstructs
 {
     public interface ICompanyRepository : IRepository<Company>
     {
-   
+         Task<Company> GetByPhoneNumber(string number);
     }
 }
