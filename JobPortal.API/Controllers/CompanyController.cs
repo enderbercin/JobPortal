@@ -12,12 +12,10 @@ namespace JobPortal.API.Controllers
     public class CompanyController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly ICompanySyncService _companySync;
 
-        public CompanyController(IMediator mediator, ICompanySyncService companySync)
+        public CompanyController(IMediator mediator)
         {
             _mediator = mediator;
-            _companySync = companySync;
         }
 
         [HttpGet]
@@ -41,7 +39,6 @@ namespace JobPortal.API.Controllers
             var company = await _mediator.Send(command);
             if (company.Success)
             {
-                _companySync.AddOrUpdateCompanyToElastic(company.Data.Id);
                 return CreatedAtAction(nameof(GetCompanyById), new { id = company.Data.Id }, company);
 
             }

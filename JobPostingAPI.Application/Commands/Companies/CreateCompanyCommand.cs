@@ -1,4 +1,5 @@
-﻿using JobPortal.Domain;
+﻿using JobPortal.Application.Services.Abstructs;
+using JobPortal.Domain;
 using JobPortal.Domain.Entities;
 using JobPortal.Infrastructure.Repository.Abstructs;
 using MediatR;
@@ -14,10 +15,12 @@ namespace JobPortal.Application.Commands.Companies
     public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, BaseServiceResponse<Company>>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICompanySyncService _companySync;
 
-        public CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
+        public CreateCompanyCommandHandler(IUnitOfWork unitOfWork, ICompanySyncService companySync)
         {
             _unitOfWork = unitOfWork;
+            _companySync = companySync;
         }
 
         public async Task<BaseServiceResponse<Company>> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
@@ -47,6 +50,8 @@ namespace JobPortal.Application.Commands.Companies
                     resp.Data = company;
                     resp.Status = 200;
                     resp.Success = true;
+                    _companySync.AddOrUpdateCompanyToElastic(company.Id);
+
                     return resp;
                 };
                 resp.Success = false;

@@ -23,21 +23,18 @@ namespace JobPortal.Application.Services
 
         public async Task SyncJobsToElasticsearch()
         {
-            // Elasticsearch'te en son eklenen kaydın `PostedDate` değerini al
             var searchResponse = await _elasticClient.SearchAsync<JobElastic>(s => s
-                .Index("jobs") // Elasticsearch index name
+                .Index("jobs")
                 .Sort(ss => ss.Descending(p => p.PostedDate))
-                .Size(1) // Only get the latest job
+                .Size(1) 
             );
 
             DateTime lastPostedDate = searchResponse.Documents.FirstOrDefault()?.PostedDate ?? DateTime.MinValue;
 
-            // Veritabanında bu tarihten sonra eklenen kayıtları al
             var jobsToSync = _context.Jobs
                 .Where(j => j.CreatedDate > lastPostedDate)
                 .ToList();
 
-            // `JobElastic` modeline dönüştür
             var jobElasticDocs = jobsToSync.Select(j => new JobElastic
             {
                 Id = j.Id,
@@ -49,13 +46,12 @@ namespace JobPortal.Application.Services
             }).ToList();
 
             var bulkResponse = await _elasticClient.BulkAsync(b => b
-                .Index("jobs") // Elasticsearch index name
+                .Index("jobs")
                 .IndexMany(jobElasticDocs)
             );
 
             if (bulkResponse.Errors)
             {
-                // İşlem sırasında hata oluştuysa loglama yap
                 Console.WriteLine("Error syncing jobs to Elasticsearch");
             }
             else
