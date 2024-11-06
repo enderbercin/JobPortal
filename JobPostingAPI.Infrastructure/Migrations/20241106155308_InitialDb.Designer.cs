@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace JobPortal.Infrastructure.Migrations
 {
     [DbContext(typeof(JobPortalDbContext))]
-    [Migration("20241106020743_InitialDatabase")]
-    partial class InitialDatabase
+    [Migration("20241106155308_InitialDb")]
+    partial class InitialDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,8 +85,11 @@ namespace JobPortal.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
-                    b.Property<string>("EmploymentType")
-                        .HasColumnType("text");
+                    b.Property<int?>("EmploymentType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Position")
                         .IsRequired()

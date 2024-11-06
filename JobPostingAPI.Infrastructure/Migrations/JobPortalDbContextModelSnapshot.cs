@@ -82,8 +82,11 @@ namespace JobPortal.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
-                    b.Property<string>("EmploymentType")
-                        .HasColumnType("text");
+                    b.Property<int?>("EmploymentType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Position")
                         .IsRequired()

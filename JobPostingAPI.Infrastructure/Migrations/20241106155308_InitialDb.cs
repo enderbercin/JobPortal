@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace JobPortal.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDatabase : Migration
+    public partial class InitialDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,13 +34,14 @@ namespace JobPortal.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CompanyId = table.Column<Guid>(type: "uuid", nullable: false),
                     Position = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
                     QualityScore = table.Column<int>(type: "integer", nullable: false),
                     Benefits = table.Column<string>(type: "text", nullable: true),
-                    EmploymentType = table.Column<string>(type: "text", nullable: true),
+                    EmploymentType = table.Column<int>(type: "integer", nullable: true),
                     Salary = table.Column<decimal>(type: "numeric", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uuid", nullable: false),
                     RecordStatus = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ChangedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
