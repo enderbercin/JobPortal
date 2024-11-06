@@ -1,30 +1,29 @@
 ﻿using JobPortal.Domain.Entities;
-using JobPortal.Infrastructure.Repository.Abstructs;
+using JobPortal.Infrastructure.Repository.Abstracts;
 using MediatR;
 
-namespace JobPortal.Application.Queries.Companies
+namespace JobPortal.Application.Queries.Companies;
+
+public class GetCompanyByIdQuery : IRequest<Company>
 {
-    public class GetCompanyByIdQuery : IRequest<Company>
-    {
-        public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-        public GetCompanyByIdQuery(Guid id)
-        {
-            Id = id;
-        }
+    public GetCompanyByIdQuery(Guid id)
+    {
+        Id = id;
     }
-    public class GetCompanyByIdQueryHandler : IRequestHandler<GetCompanyByIdQuery, Company>
+}
+public class GetCompanyByIdQueryHandler : IRequestHandler<GetCompanyByIdQuery, Company>
+{
+    private readonly IUnitOfWork _unitOfWork;
+
+    public GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
     {
-        private readonly IUnitOfWork _unitOfWork;
+        _unitOfWork = unitOfWork;
+    }
 
-        public GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
-
-        public async Task<Company> Handle(GetCompanyByIdQuery request, CancellationToken cancellationToken)
-        {
-            return await _unitOfWork.GetRepository<Company>().GetByIdAsync(request.Id);
-        }
+    public async Task<Company> Handle(GetCompanyByIdQuery request, CancellationToken cancellationToken)
+    {
+        return await _unitOfWork.GetRepository<Company>().GetByIdAsync(request.Id);
     }
 }

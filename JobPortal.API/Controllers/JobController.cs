@@ -3,48 +3,46 @@ using JobPortal.Application.Queries.Jobs;
 using JobPortal.Domain;
 using JobPortal.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobPortal.API.Controllers
+namespace JobPortal.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class JobController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class JobController : ControllerBase
+    private readonly IMediator _mediator;
+
+    public JobController(IMediator mediator)
     {
-        private readonly IMediator _mediator;
+        _mediator = mediator;
+    }
 
-        public JobController(IMediator mediator)
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseServiceResponse<Job>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BaseServiceResponse))]
+    public async Task<IActionResult> CreateJob([FromBody] CreateJobCommand command)
+    {
+        try
         {
-            _mediator = mediator;
-        }
 
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseServiceResponse<Job>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BaseServiceResponse))]
-        public async Task<IActionResult> CreateJob([FromBody] CreateJobCommand command)
-        {
-            try
+            var job = await _mediator.Send(command);
+            if (!job.Success)
             {
-
-                var job = await _mediator.Send(command);
-                if (!job.Success)
-                {
-                    return BadRequest(job.ExceptionList.FirstOrDefault());
-                }
-                return Ok(job);
+                return BadRequest(job.ExceptionList.FirstOrDefault());
             }
-            catch (Exception ex)
-            {
-                return BadRequest();
-            }
+            return Ok(job);
         }
-        [HttpGet("search")]
-        public async Task<IActionResult> SearchJobsByExpirationDate([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        catch (Exception ex)
         {
-            var query = new GetJobsByExpirationDateQuery(startDate, endDate);
-            var jobs = await _mediator.Send(query);
-            return Ok(jobs);
+            return BadRequest();
         }
+    }
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchJobsByExpirationDate([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+    {
+        var query = new GetJobsByExpirationDateQuery(startDate, endDate);
+        var jobs = await _mediator.Send(query);
+        return Ok(jobs);
     }
 }

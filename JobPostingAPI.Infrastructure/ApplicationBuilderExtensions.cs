@@ -3,47 +3,42 @@ using JobPortal.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using JobPortal.Application.Services;
 
-namespace JobPortal.Infrastructure
+namespace JobPortal.Infrastructure;
+
+public static class ApplicationBuilderExtensions
 {
-    public static class ApplicationBuilderExtensions
+    public static void InitializeDatabase(this IApplicationBuilder app)
     {
-        public static void InitializeDatabase(this IApplicationBuilder app)
+        using (var scope = app.ApplicationServices.CreateScope()) 
         {
-            using (var scope = app.ApplicationServices.CreateScope()) 
+            var services = scope.ServiceProvider;
+            try
             {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    var context = services.GetRequiredService<JobPortalDbContext>();
-                    context.Database.Migrate(); 
+                var context = services.GetRequiredService<JobPortalDbContext>();
+                context.Database.Migrate(); 
 
-                    DummyData.Initialize(services);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Database initialization failed: {ex.Message}");
-                    throw; 
-                }
+                DummyData.Initialize(services);
             }
-
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Database initialization failed: {ex.Message}");
+                throw; 
+            }
         }
-        public static void AddHangfireService(this IApplicationBuilder app)
-        {
-            app.UseHangfireDashboard("/hangfire-dashboard");
-            app.UseHangfireServer();
 
-            RecurringJob.AddOrUpdate<JobSyncService>(
-                "sync-jobs-to-elasticsearch",
-                service => service.SyncJobsToElasticsearch(),
-                Cron.MinuteInterval(2)
-            );
+    }
+    public static void AddHangfireService(this IApplicationBuilder app)
+    {
+        app.UseHangfireDashboard("/hangfire-dashboard");
+        app.UseHangfireServer();
 
-        }
+        RecurringJob.AddOrUpdate<JobSyncService>(
+            "sync-jobs-to-elasticsearch",
+            service => service.SyncJobsToElasticsearch(),
+            Cron.MinuteInterval(2)
+        );
+
     }
 }

@@ -1,10 +1,6 @@
-﻿using JobPortal.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using System.Reflection;
 using JobPortal.Application;
-using Hangfire;
-using JobPortal.Application.Services;
 using JobPortal.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);

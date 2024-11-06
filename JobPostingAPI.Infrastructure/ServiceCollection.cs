@@ -1,5 +1,5 @@
 ﻿using JobPortal.Infrastructure.Data;
-using JobPortal.Infrastructure.Repository.Abstructs;
+using JobPortal.Infrastructure.Repository.Abstracts;
 using JobPortal.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -7,28 +7,27 @@ using Microsoft.Extensions.DependencyInjection;
 using Hangfire.PostgreSql;
 using Hangfire;
 
-namespace JobPortal.Infrastructure
+namespace JobPortal.Infrastructure;
+
+public static class ServiceCollection
 {
-    public static class ServiceCollection
+    public static IServiceCollection AddInfrastructureLayer(this IServiceCollection services, IConfiguration configuration)
     {
-        public static IServiceCollection AddInfrastructureLayer(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddDbContext<JobPortalDbContext>(options =>
-    options.UseNpgsql(configuration.GetConnectionString("JobPortalDb")));
+        services.AddDbContext<JobPortalDbContext>(options =>
+options.UseNpgsql(configuration.GetConnectionString("JobPortalDb")));
 
-            var connectionString = configuration.GetConnectionString("HangfireDbConnection");
+        var connectionString = configuration.GetConnectionString("HangfireDbConnection");
 
-            services.AddHangfire(config =>
-                config.UsePostgreSqlStorage(connectionString));
+        services.AddHangfire(config =>
+            config.UsePostgreSqlStorage(connectionString));
 
-            services.AddHangfireServer();
+        services.AddHangfireServer();
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IJobRepository, JobRepository>();
-            services.AddScoped<ICompanyRepository, CompanyRepository>();
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IJobRepository, JobRepository>();
+        services.AddScoped<ICompanyRepository, CompanyRepository>();
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            return services;
-        }
+        return services;
     }
 }

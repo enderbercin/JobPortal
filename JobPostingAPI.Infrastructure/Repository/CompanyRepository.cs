@@ -1,47 +1,41 @@
 ﻿using JobPortal.Domain.Entities;
 using JobPortal.Infrastructure.Data;
-using JobPortal.Infrastructure.Repository.Abstructs;
+using JobPortal.Infrastructure.Repository.Abstracts;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace JobPortal.Infrastructure.Repository
+namespace JobPortal.Infrastructure.Repository;
+
+public class CompanyRepository : Repository<Company>, ICompanyRepository
 {
-    public class CompanyRepository : Repository<Company>, ICompanyRepository
+    private readonly JobPortalDbContext _context;
+
+    public CompanyRepository(JobPortalDbContext context) : base(context)
     {
-        private readonly JobPortalDbContext _context;
+        _context = context;
+    }
 
-        public CompanyRepository(JobPortalDbContext context) : base(context)
+    public async Task<Company> GetByIdAsync(Guid id) =>
+        await _context.Companies.Include(c => c.Jobs).FirstOrDefaultAsync(c => c.Id == id);
+
+    public async Task AddAsync(Company company) => await _context.Companies.AddAsync(company);
+
+    public void Update(Company company) => _context.Companies.Update(company);
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var company = await _context.Companies.FindAsync(id);
+        if (company != null)
         {
-            _context = context;
+            _context.Companies.Remove(company);
         }
+    }
 
-        public async Task<Company> GetByIdAsync(Guid id) =>
-            await _context.Companies.Include(c => c.Jobs).FirstOrDefaultAsync(c => c.Id == id);
-
-        public async Task AddAsync(Company company) => await _context.Companies.AddAsync(company);
-
-        public void Update(Company company) => _context.Companies.Update(company);
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var company = await _context.Companies.FindAsync(id);
-            if (company != null)
-            {
-                _context.Companies.Remove(company);
-            }
-        }
-
-        public async Task<Company> GetByPhoneNumber(string number)
-        {
-            string cleanNumber = Regex.Replace(number, @"[^\d]", "");
-            string last10Digits = cleanNumber.Substring(cleanNumber.Length - 10);
-            return await _context.Companies
-                                       .FirstOrDefaultAsync(c => c.PhoneNumber.EndsWith(last10Digits));
-        }
+    public async Task<Company> GetByPhoneNumber(string number)
+    {
+        string cleanNumber = Regex.Replace(number, @"[^\d]", "");
+        string last10Digits = cleanNumber.Substring(cleanNumber.Length - 10);
+        return await _context.Companies
+                                   .FirstOrDefaultAsync(c => c.PhoneNumber.EndsWith(last10Digits));
     }
 }

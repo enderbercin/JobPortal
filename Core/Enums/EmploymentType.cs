@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Core.Enums;
 
-namespace Core.Enums
+public enum EmploymentType
 {
-    public enum EmploymentType
-    {
-        FullTime = 1,
-        PartTime = 2,
-    }
+    FullTime = 1,
+    PartTime = 2,
 }

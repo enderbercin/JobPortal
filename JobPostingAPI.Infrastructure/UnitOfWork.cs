@@ -1,55 +1,47 @@
-﻿using JobPortal.Domain.Entities;
-using JobPortal.Infrastructure.Data;
+﻿using JobPortal.Infrastructure.Data;
 using JobPortal.Infrastructure.Repository;
-using JobPortal.Infrastructure.Repository.Abstructs;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using JobPortal.Infrastructure.Repository.Abstracts;
 
-namespace JobPortal.Infrastructure
+namespace JobPortal.Infrastructure;
+
+public class UnitOfWork : IUnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    private readonly JobPortalDbContext _context;
+    private Dictionary<Type, object> _repositories;
+
+    public UnitOfWork(JobPortalDbContext context)
     {
-        private readonly JobPortalDbContext _context;
-        private Dictionary<Type, object> _repositories;
-
-        public UnitOfWork(JobPortalDbContext context)
-        {
-            _context = context;
-            _repositories = new Dictionary<Type, object>();
-        }
+        _context = context;
+        _repositories = new Dictionary<Type, object>();
+    }
 
 
-        private CompanyRepository _CompanyRepository;
+    private CompanyRepository _CompanyRepository;
 
-        public ICompanyRepository CompanyRepository => _CompanyRepository = _CompanyRepository ?? new CompanyRepository(_context);
+    public ICompanyRepository CompanyRepository => _CompanyRepository = _CompanyRepository ?? new CompanyRepository(_context);
 
-        private JobRepository _JobRepository;
+    private JobRepository _JobRepository;
 
-        public IJobRepository JobRepository => _JobRepository = _JobRepository ?? new JobRepository(_context);
+    public IJobRepository JobRepository => _JobRepository = _JobRepository ?? new JobRepository(_context);
 
 
-        public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
-        {
-            if (_repositories.ContainsKey(typeof(TEntity)))
-                return (IRepository<TEntity>)_repositories[typeof(TEntity)];
+    public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
+    {
+        if (_repositories.ContainsKey(typeof(TEntity)))
+            return (IRepository<TEntity>)_repositories[typeof(TEntity)];
 
-            var repository = new Repository<TEntity>(_context);
-            _repositories.Add(typeof(TEntity), repository);
-            return repository;
-        }
+        var repository = new Repository<TEntity>(_context);
+        _repositories.Add(typeof(TEntity), repository);
+        return repository;
+    }
 
-        public async Task<int> SaveChangesAsync()
-        {
-            return await _context.SaveChangesAsync();
-        }
+    public async Task<int> SaveChangesAsync()
+    {
+        return await _context.SaveChangesAsync();
+    }
 
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 }
