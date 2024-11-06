@@ -1,4 +1,4 @@
-﻿using JobPortal.Application.Services;
+﻿using JobPortal.Application.Services.Abstructs;
 using JobPortal.Domain;
 using JobPortal.Domain.Entities;
 using JobPortal.Infrastructure.Repository.Abstructs;

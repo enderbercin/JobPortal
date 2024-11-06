@@ -1,4 +1,5 @@
 ﻿using JobPortal.Application.Services;
+using JobPortal.Application.Services.Abstructs;
 using JobPortal.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,7 @@ namespace JobPortal.Application
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddInfrastructureLayer(configuration);  
             services.AddScoped<IJobQualityService , JobQualityService>();
+            services.AddScoped<ICompanySyncService, CompanySyncService>();
             return services;
 
         }

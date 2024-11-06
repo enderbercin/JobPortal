@@ -1,5 +1,6 @@
 ﻿using JobPortal.Application.Commands.Companies;
 using JobPortal.Application.Queries.Companies;
+using JobPortal.Application.Services.Abstructs;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,12 @@ namespace JobPortal.API.Controllers
     public class CompanyController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ICompanySyncService _companySync;
 
-        public CompanyController(IMediator mediator)
+        public CompanyController(IMediator mediator, ICompanySyncService companySync)
         {
             _mediator = mediator;
+            _companySync = companySync;
         }
 
         [HttpGet]
@@ -37,7 +40,11 @@ namespace JobPortal.API.Controllers
         {
             var company = await _mediator.Send(command);
             if (company.Success)
+            {
+                _companySync.AddOrUpdateCompanyToElastic(company.Data.Id);
                 return CreatedAtAction(nameof(GetCompanyById), new { id = company.Data.Id }, company);
+
+            }
 
             return BadRequest(company.ExceptionList.FirstOrDefault());
         }

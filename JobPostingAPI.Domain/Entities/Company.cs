@@ -23,5 +23,6 @@ namespace JobPortal.Domain.Entities
         public int PostingQuota { get; set; } = 2; 
 
         public ICollection<Job> Jobs { get; set; } = new List<Job>();
+
     }
 }

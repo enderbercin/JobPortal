@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JobPortal.Application.Services
+namespace JobPortal.Application.Services.Abstructs
 {
     public interface IJobQualityService
     {
