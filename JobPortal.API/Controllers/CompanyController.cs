@@ -57,11 +57,5 @@ namespace JobPortal.API.Controllers
             return NoContent();
         }
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteCompany(int id)
-        //{
-        //    await _mediator.Send(new DeleteCompanyCommand(id));
-        //    return NoContent();
-        //}
     }
 }

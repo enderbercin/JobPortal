@@ -50,10 +50,10 @@ namespace JobPortal.Infrastructure.Data
 
                 var jobs = new[]
                 {
-                    CreateJob(techCompany.Id, "Software Developer", "Develop scalable web applications using .NET Core.", "Full-time", 60000m, "Health insurance, Retirement plan"),
+                    CreateJob(techCompany.Id, "Software Developer", "Develop scalable web applications using .NET Core.", EmploymentType.FullTime, 60000m, "Health insurance, Retirement plan"),
                     CreateJob(techCompany.Id, "Systems Analyst", "Analyze and improve IT systems.", null, null, null),
-                    CreateJob(creativeCompany.Id, "UI/UX Designer", "Design user-friendly interfaces.", "Part-time", 45000m, "Flexible hours"),
-                    CreateJob(creativeCompany.Id, "Project Manager", "Manage software projects from start to finish.", "Contract", 70000m, "Health insurance")
+                    CreateJob(creativeCompany.Id, "UI/UX Designer", "Design user-friendly interfaces.", EmploymentType.FullTime, 45000m, "Flexible hours"),
+                    CreateJob(creativeCompany.Id, "Project Manager", "Manage software projects from start to finish.", EmploymentType.PartTime, 70000m, "Health insurance")
                     };
 
                 context.Jobs.AddRange(jobs);
@@ -61,7 +61,7 @@ namespace JobPortal.Infrastructure.Data
             }
         }
 
-        private static Job CreateJob(Guid companyId, string position, string description, string? employmentType, decimal? salary, string? benefits)
+        private static Job CreateJob(Guid companyId, string position, string description, EmploymentType? employmentType, decimal? salary, string? benefits)
         {
             var qualityScore = CalculateQualityScore(employmentType, salary, benefits, description);
             return new Job
@@ -76,12 +76,12 @@ namespace JobPortal.Infrastructure.Data
             };
         }
 
-        private static int CalculateQualityScore(string? employmentType, decimal? salary, string? benefits, string description)
+        private static int CalculateQualityScore(EmploymentType? employmentType, decimal? salary, string? benefits, string description)
         {
             int score = 0;
 
             // Çalışma türü belirtilmesi (1 puan)
-            if (!string.IsNullOrEmpty(employmentType)) score += 1;
+            if (employmentType.HasValue) score += 1;
 
             // Ücret bilgisi belirtilmesi (1 puan)
             if (salary.HasValue) score += 1;
@@ -90,7 +90,6 @@ namespace JobPortal.Infrastructure.Data
             if (!string.IsNullOrEmpty(benefits)) score += 1;
 
             // İlan açıklamasında sakıncalı kelime bulunmaması (2 puan)
-            // Örnek sakıncalı kelimeler
             string[] inappropriateWords = { "bad", "terrible", "awful" };
             if (!inappropriateWords.Any(word => description.Contains(word, StringComparison.OrdinalIgnoreCase)))
             {

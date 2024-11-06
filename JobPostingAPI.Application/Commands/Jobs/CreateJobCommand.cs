@@ -11,7 +11,7 @@ namespace JobPortal.Application.Commands.Jobs
         public Guid CompanyId { get; set; }
         public string Position { get; set; }
         public string Description { get; set; }
-        public string? EmploymentType { get; set; }
+        public EmploymentType? EmploymentType { get; set; }
         public decimal? Salary { get; set; }
         public string? Benefits { get; set; }
     }

@@ -9,8 +9,6 @@ namespace JobPortal.Domain.Entities
 {
     public class Job : BaseEntity
     {
-        [Required(ErrorMessage = "Şirket ID'si gereklidir.")]
-        public Guid CompanyId { get; set; }
 
         [Required(ErrorMessage = "Pozisyon gereklidir.")]
         [StringLength(100, ErrorMessage = "Pozisyon 100 karakterden uzun olamaz.")]
@@ -22,14 +20,20 @@ namespace JobPortal.Domain.Entities
         public int QualityScore { get; set; }
 
         public string? Benefits { get; set; }
-        public string? EmploymentType { get; set; }
+        public EmploymentType? EmploymentType { get; set; }
 
         [Range(0, double.MaxValue, ErrorMessage = "Maaş sıfırdan büyük bir değer olmalıdır.")]
         public decimal? Salary { get; set; }
-
+        [Required(ErrorMessage = "Bitiş tarihi zorunludur.")]
+        public DateTime EndDate { get; set; } = DateTime.UtcNow.AddDays(15);
+        public Guid CompanyId { get; set; }
         [Required(ErrorMessage = "Şirket bilgisi gereklidir.")]
         public Company Company { get; set; }
 
     }
-
+    public enum EmploymentType
+    {
+        FullTime = 1,
+        PartTime = 2,
+    }
 }
