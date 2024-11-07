@@ -59,12 +59,12 @@ public class CreateJobHandler : IRequestHandler<CreateJobCommand, BaseServiceRes
         await _jobRepository.AddAsync(job);
         company.PostingQuota--;
         await _companyRepository.UpdateAsync(company);
-        var response = new BaseServiceResponse<Job>()
+        var response = new BaseServiceResponse<string>()
         {
             Status = 200,
             Success = true,
-            Data = job
-
+            Data = job.Id.ToString()
+            
         };
         return response;
     }

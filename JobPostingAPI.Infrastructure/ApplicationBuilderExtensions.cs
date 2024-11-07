@@ -24,7 +24,6 @@ public static class ApplicationBuilderExtensions
             catch (Exception ex)
             {
                 Console.WriteLine($"Database initialization failed: {ex.Message}");
-                throw; 
             }
         }
 

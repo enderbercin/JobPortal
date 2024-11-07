@@ -47,9 +47,15 @@ public class CompanyController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateCompany(Guid id, [FromBody] UpdateCompanyCommand command)
     {
-        if (id != command.Id) return BadRequest();
-        await _mediator.Send(command);
-        return NoContent();
+        if (id != command.Id) 
+            return BadRequest();
+
+        var resp =  await _mediator.Send(command);
+        if (resp.Success)
+        {
+            return Ok(resp);
+        }
+        return BadRequest(resp);
     }
 
 }

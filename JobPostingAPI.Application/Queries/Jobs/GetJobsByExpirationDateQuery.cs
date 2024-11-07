@@ -26,18 +26,21 @@ public class GetJobsByExpirationDateQueryHandler : IRequestHandler<GetJobsByExpi
 
     public async Task<IEnumerable<JobElastic>> Handle(GetJobsByExpirationDateQuery request, CancellationToken cancellationToken)
     {
-        var searchResponse = await _elasticClient.SearchAsync<JobElastic>(x => x
-            .Query(x => x
-                .DateRange(x => x
-                    .Field(x => x.ExpirationDate)
-                    .GreaterThanOrEquals(request.StartDate)
-                    .LessThanOrEquals(request.EndDate)
-                )
-            )
-        );
 
+        var searchResponse = await _elasticClient.SearchAsync<JobElastic>(x => x
+                .Index("jobs")
+                .Query(q => q
+                    .DateRange(dr => dr
+                        .Field(f => f.ExpirationDate)
+                        .GreaterThanOrEquals(request.StartDate)
+                        .LessThanOrEquals(request.EndDate)
+                     )
+                 )
+             );
+  
         if (!searchResponse.IsValid || !searchResponse.Documents.Any())
         {
+
             return Enumerable.Empty<JobElastic>();
         }
 
